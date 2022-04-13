@@ -1,0 +1,26 @@
+{
+  "name": "planchon_baptiste_7_09042022_back",
+  "version": "1.0.0",
+  "description": "Backend du site Groupomania",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Baptiste71/Planchon_Baptiste_7_09042022_Back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Baptiste71/Planchon_Baptiste_7_09042022_Back/issues"
+  },
+  "homepage": "https://github.com/Baptiste71/Planchon_Baptiste_7_09042022_Back#readme",
+  "dependencies": {
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.19.0"
+  }
+}
