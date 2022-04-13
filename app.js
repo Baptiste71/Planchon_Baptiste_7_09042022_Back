@@ -18,8 +18,33 @@ app.post("/user", async (req, res) => {
   }
 });
 
+app.get("/user", async (req, res) => {
+  try {
+    const users = await User.findAll();
+
+    return res.json(users);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+app.get("/user/:uuid", async (req, res) => {
+  const uuid = req.params.uuid;
+  try {
+    const userDb = await User.findOne({
+      where: { uuid },
+    });
+
+    return res.json(userDb);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
 app.listen({ port: 5000 }, async () => {
   console.log("Server up on http://localhost:5000 ");
-  await sequelize.sync({ force: true });
-  console.log("Database synced!");
+  await sequelize.authenticate();
+  console.log("Database connected!");
 });
