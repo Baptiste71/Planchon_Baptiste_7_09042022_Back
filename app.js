@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { sequelize, User, Post } = require("./models");
+const user = require("./models/user");
 
 const app = express();
 app.use(express.json());
@@ -34,7 +35,46 @@ app.get("/user/:uuid", async (req, res) => {
   try {
     const userDb = await User.findOne({
       where: { uuid },
+      include: "posts",
     });
+
+    return res.json(userDb);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+app.delete("/user/:uuid", async (req, res) => {
+  const uuid = req.params.uuid;
+  try {
+    const userDb = await User.findOne({
+      where: { uuid },
+    });
+
+    await userDb.destroy();
+
+    return res.json({ message: "User deleted!" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+app.put("/user/:uuid", async (req, res) => {
+  const uuid = req.params.uuid;
+  const { firstname, lastname, email, password } = req.body;
+  try {
+    const userDb = await User.findOne({
+      where: { uuid },
+    });
+
+    userDb.firstname = firstname;
+    userDb.lastname = lastname;
+    userDb.email = email;
+    userDb.password = password;
+
+    await userDb.save();
 
     return res.json(userDb);
   } catch (err) {
@@ -54,6 +94,16 @@ app.post("/posts", async (req, res) => {
     const post = await Post.create({ body, userId: user.id });
 
     return res.json(post);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await Post.findAll({ include: "user" });
+    return res.json(posts);
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
