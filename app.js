@@ -1,10 +1,44 @@
 const express = require("express");
-
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const { sequelize, User, Post } = require("./models");
 const user = require("./models/user");
+let corsOptions = {
+  origin: "http://localhost:5000",
+};
 
 const app = express();
 app.use(express.json());
+const path = require("path");
+
+// Importation des routes
+
+const userRoutes = require("./routes/user");
+
+//const userRoutes = require("./routes/user");
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  next();
+});
+
+app.use(cors(corsOptions));
+// parse requests of content-type - application/json
+app.use(bodyParser.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to Groupomania application." });
+});
+
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+// Enregistrement des routes
+
+app.use("/api/user", userRoutes);
 
 app.post("/user", async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -45,43 +79,43 @@ app.get("/user/:uuid", async (req, res) => {
   }
 });
 
-app.delete("/user/:uuid", async (req, res) => {
-  const uuid = req.params.uuid;
-  try {
-    const userDb = await User.findOne({
-      where: { uuid },
-    });
-
-    await userDb.destroy();
-
-    return res.json({ message: "User deleted!" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Something went wrong!" });
-  }
-});
-
-app.put("/user/:uuid", async (req, res) => {
-  const uuid = req.params.uuid;
-  const { firstname, lastname, email, password } = req.body;
-  try {
-    const userDb = await User.findOne({
-      where: { uuid },
-    });
-
-    userDb.firstname = firstname;
-    userDb.lastname = lastname;
-    userDb.email = email;
-    userDb.password = password;
-
-    await userDb.save();
-
-    return res.json(userDb);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Something went wrong!" });
-  }
-});
+//app.delete("/user/:uuid", async (req, res) => {
+//  const uuid = req.params.uuid;
+//  try {
+//    const userDb = await User.findOne({
+//      where: { uuid },
+//    });
+//
+//    await userDb.destroy();
+//
+//    return res.json({ message: "User deleted!" });
+//  } catch (err) {
+//    console.log(err);
+//    return res.status(500).json({ error: "Something went wrong!" });
+//  }
+//});
+//
+//app.put("/user/:uuid", async (req, res) => {
+//  const uuid = req.params.uuid;
+//  const { firstname, lastname, email, password } = req.body;
+//  try {
+//    const userDb = await User.findOne({
+//      where: { uuid },
+//    });
+//
+//    userDb.firstname = firstname;
+//    userDb.lastname = lastname;
+//    userDb.email = email;
+//    userDb.password = password;
+//
+//    await userDb.save();
+//
+//    return res.json(userDb);
+//  } catch (err) {
+//    console.log(err);
+//    return res.status(500).json({ error: "Something went wrong!" });
+//  }
+//});
 
 app.post("/posts", async (req, res) => {
   const { userUuid, body } = req.body;
@@ -115,3 +149,5 @@ app.listen({ port: 5000 }, async () => {
   await sequelize.authenticate();
   console.log("Database connected!");
 });
+
+module.exports = app;
