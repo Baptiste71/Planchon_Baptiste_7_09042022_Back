@@ -11,9 +11,15 @@ const User = require("../models/user");
 
 exports.register = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
-
+  const salt = await bcrypt.genSalt();
+  const hashPassword = await bcrypt.hash(password, salt);
   try {
-    const users = await User.create({ firstname, lastname, email, password });
+    const users = await User.create({
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      password: hashPassword,
+    });
 
     return res.json(users);
   } catch (err) {
@@ -24,69 +30,83 @@ exports.register = async (req, res, next) => {
 
 // Connection des utilisateurs existants
 
-exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email })
-    .then((user) => {
-      if (!user) {
-        return res.status(401).json({ error: " Utilisateur non trouvé!" });
+exports.login = async (req, res, next) => {
+  try {
+    const user = await User.findAll({
+      where: {
+        email: req.body.email,
+      },
+    });
+    const match = await bcrypt.compare(req.body.password, user[0].password);
+    if (!match) return res.status(400).json({ msg: "Wrong Password" });
+    const userId = user[0].uuid;
+    const firstname = user[0].firstname;
+    const lastname = user[0].lastname;
+    const email = user[0].email;
+    const accessToken = jsonWT.sign({ userId, firstname, lastname, email }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "15s",
+    });
+    const refreshToken = jsonWT.sign({ userId, firstname, lastname, email }, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: "1d",
+    });
+    await User.update(
+      { refresh_token: refreshToken },
+      {
+        where: {
+          id: userId,
+        },
       }
-
-      // Comparaison de notre mot de passe avec celui enregistré
-
-      bcrypt
-        .compare(req.body.password, user.password)
-        .then((valid) => {
-          if (!valid) {
-            return res.status(401).json({ error: "Mot de passe incorrect" });
-          }
-          res.status(200).json({
-            userId: user.uuid,
-            token: jsonWT.sign({ userId: user.uuid }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" }),
-          });
-        })
-        .catch((error) => res.status(500).json({ error }));
-    })
-    .catch((error) => res.status(500).json({ error }));
-};
-
-// modification des données utilisateur
-
-exports.userUpdate = async (req, res, next) => {
-  const uuid = req.params.uuid;
-  const { firstname, lastname, email, password } = req.body;
-  try {
-    const userDb = await User.findOne({
-      where: { uuid },
+    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
     });
-
-    userDb.firstname = firstname;
-    userDb.lastname = lastname;
-    userDb.email = email;
-    userDb.password = password;
-
-    await userDb.save();
-
-    return res.json(userDb);
+    res.json({ accessToken });
+    return res.json(user);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong!" });
   }
-};
 
-// Suppression d'un utilisateur
+  // modification des données utilisateur
 
-exports.userDelete = async (req, res, next) => {
-  const uuid = req.params.uuid;
-  try {
-    const userDb = await User.findOne({
-      where: { uuid },
-    });
+  exports.userUpdate = async (req, res, next) => {
+    const uuid = req.params.uuid;
+    const { firstname, lastname, email, password } = req.body;
+    try {
+      const userDb = await User.findOne({
+        where: { uuid },
+      });
 
-    await userDb.destroy();
+      userDb.firstname = firstname;
+      userDb.lastname = lastname;
+      userDb.email = email;
+      userDb.password = password;
 
-    return res.json({ message: "User deleted!" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Something went wrong!" });
-  }
+      await userDb.save();
+
+      return res.json(userDb);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Something went wrong!" });
+    }
+  };
+
+  // Suppression d'un utilisateur
+
+  exports.userDelete = async (req, res, next) => {
+    const uuid = req.params.uuid;
+    try {
+      const userDb = await User.findOne({
+        where: { uuid },
+      });
+
+      await userDb.destroy();
+
+      return res.json({ message: "User deleted!" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Something went wrong!" });
+    }
+  };
 };

@@ -1,21 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+const dotenv = require("dotenv");
+const routerUser = require("./routes/user");
 const { sequelize, User, Post } = require("./models");
 const user = require("./models/user");
+const cors = require("cors");
 let corsOptions = {
-  origin: "http://localhost:5000",
+  origin: "http://localhost:3000",
 };
+const path = require("path");
 
 const app = express();
-app.use(express.json());
-const path = require("path");
 
 // Importation des routes
 
 const userRoutes = require("./routes/user");
-
-//const userRoutes = require("./routes/user");
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -33,26 +32,27 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Groupomania application." });
 });
-
+app.use(express.json());
+app.use(routerUser);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Enregistrement des routes
 
-app.use("/api/user", userRoutes);
+app.use("/api/auth", userRoutes);
 
-app.post("/user", async (req, res) => {
-  const { firstname, lastname, email, password } = req.body;
-
-  try {
-    const users = await User.create({ firstname, lastname, email, password });
-
-    return res.json(users);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
-  }
-});
-
+//app.post("/user", async (req, res) => {
+//  const { firstname, lastname, email, password } = req.body;
+//
+//  try {
+//    const users = await User.create({ firstname, lastname, email, password });
+//
+//    return res.json(users);
+//  } catch (err) {
+//    console.log(err);
+//    return res.status(500).json(err);
+//  }
+//});
+//
 app.get("/user", async (req, res) => {
   try {
     const users = await User.findAll();
@@ -63,21 +63,21 @@ app.get("/user", async (req, res) => {
     return res.status(500).json({ error: "Something went wrong!" });
   }
 });
-
-app.get("/user/:uuid", async (req, res) => {
-  const uuid = req.params.uuid;
-  try {
-    const userDb = await User.findOne({
-      where: { uuid },
-      include: "posts",
-    });
-
-    return res.json(userDb);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Something went wrong!" });
-  }
-});
+//
+//app.get("/user/:uuid", async (req, res) => {
+//  const uuid = req.params.uuid;
+//  try {
+//    const userDb = await User.findOne({
+//      where: { uuid },
+//      include: "posts",
+//    });
+//
+//    return res.json(userDb);
+//  } catch (err) {
+//    console.log(err);
+//    return res.status(500).json({ error: "Something went wrong!" });
+//  }
+//});
 
 //app.delete("/user/:uuid", async (req, res) => {
 //  const uuid = req.params.uuid;
@@ -117,32 +117,32 @@ app.get("/user/:uuid", async (req, res) => {
 //  }
 //});
 
-app.post("/posts", async (req, res) => {
-  const { userUuid, body } = req.body;
-
-  try {
-    const user = await User.findOne({
-      where: { uuid: userUuid },
-    });
-
-    const post = await Post.create({ body, userId: user.id });
-
-    return res.json(post);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
-  }
-});
-
-app.get("/posts", async (req, res) => {
-  try {
-    const posts = await Post.findAll({ include: "user" });
-    return res.json(posts);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
-  }
-});
+//app.post("/posts", async (req, res) => {
+//  const { userUuid, body } = req.body;
+//
+//  try {
+//    const user = await User.findOne({
+//      where: { uuid: userUuid },
+//    });
+//
+//    const post = await Post.create({ body, userId: user.id });
+//
+//    return res.json(post);
+//  } catch (err) {
+//    console.log(err);
+//    return res.status(500).json(err);
+//  }
+//});
+//
+//app.get("/posts", async (req, res) => {
+//  try {
+//    const posts = await Post.findAll({ include: "user" });
+//    return res.json(posts);
+//  } catch (err) {
+//    console.log(err);
+//    return res.status(500).json(err);
+//  }
+//});
 
 app.listen({ port: 5000 }, async () => {
   console.log("Server up on http://localhost:5000 ");
