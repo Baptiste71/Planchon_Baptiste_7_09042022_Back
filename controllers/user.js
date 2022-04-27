@@ -5,7 +5,7 @@ const jsonWT = require("jsonwebtoken");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
 
-const User = require("../models/user");
+const { User } = require("../models");
 
 // Enregistrment de nouveaux utilisateurs
 
@@ -39,30 +39,15 @@ exports.login = async (req, res, next) => {
     });
     const match = await bcrypt.compare(req.body.password, user[0].password);
     if (!match) return res.status(400).json({ msg: "Wrong Password" });
-    const userId = user[0].uuid;
+    const userId = user[0].id;
     const firstname = user[0].firstname;
     const lastname = user[0].lastname;
     const email = user[0].email;
-    const accessToken = jsonWT.sign({ userId, firstname, lastname, email }, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "15s",
-    });
-    const refreshToken = jsonWT.sign({ userId, firstname, lastname, email }, process.env.REFRESH_TOKEN_SECRET, {
+    const accessToken = jsonWT.sign({ userId, firstname, lastname, email }, "RANDOM_TOKEN_SECRET", {
       expiresIn: "1d",
     });
-    await User.update(
-      { refresh_token: refreshToken },
-      {
-        where: {
-          id: userId,
-        },
-      }
-    );
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+
     res.json({ accessToken });
-    return res.json(user);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong!" });

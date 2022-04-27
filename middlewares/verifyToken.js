@@ -1,12 +1,19 @@
-const jwt = require("jsonwebtoken");
+const jsonWT = require("jsonwebtoken");
 
-exports.verifyToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403);
-    req.email = decoded.email;
-    next();
-  });
+// Exportation du middleware
+
+module.exports = (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = jsonWT.verify(token, "RANDOM_TOKEN_SECRET");
+    const userId = decodedToken.userId;
+    req.auth = { userId };
+    if (req.body.userId && req.body.userId !== userId) {
+      throw "User ID non valide !";
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(401).json({ error: error | "Requête non autorisée !" });
+  }
 };
