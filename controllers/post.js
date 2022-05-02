@@ -20,7 +20,7 @@ exports.getJustOneElement = (req, res, next) => {
 
 // creation d'un post par l'utilisateur
 
-exports.addElement = async (req, res) => {
+exports.addElement = (req, res, next) => {
   const postObject = JSON.parse(req.body.sauce);
   delete postObject._id;
   const addPost = new Post({

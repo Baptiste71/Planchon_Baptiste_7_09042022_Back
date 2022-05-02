@@ -66,11 +66,11 @@ app.get("/user", async (req, res) => {
   }
 });
 //
-//app.get("/user/:uuid", async (req, res) => {
-//  const uuid = req.params.uuid;
+//app.get("/user/:id", async (req, res) => {
+//  const id = req.params.id;
 //  try {
 //    const userDb = await User.findOne({
-//      where: { uuid },
+//      where: { id },
 //      include: "posts",
 //    });
 //
