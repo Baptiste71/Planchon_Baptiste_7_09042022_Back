@@ -16,11 +16,11 @@ routerUser.post("/login", userCrtl.login);
 
 // Création de la route Put pour la modification de l'utlisateur
 
-//routerUser.put("/update", auth, userCrtl.userUpdate);
+//routerUser.put("/update", verifyToken, userCrtl.userUpdate);
 
 // Création de la route Put pour la modification de l'utlisateur
 
-//routerUser.delete("/delete", auth, userCrtl.userDelete);
+//routerUser.delete("/delete", verifyToken, userCrtl.userDelete);
 
 // Exportation du router
 

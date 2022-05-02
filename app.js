@@ -15,6 +15,7 @@ const app = express();
 // Importation des routes
 
 const userRoutes = require("./routes/user");
+const postsRoutes = require("./routes/post");
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -39,6 +40,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 // Enregistrement des routes
 
 app.use("/api/auth", userRoutes);
+app.use("/api/posts", postsRoutes);
 
 //app.post("/user", async (req, res) => {
 //  const { firstname, lastname, email, password } = req.body;
@@ -118,14 +120,14 @@ app.get("/user", async (req, res) => {
 //});
 
 //app.post("/posts", async (req, res) => {
-//  const { userUuid, body } = req.body;
+//  const { userId, message } = req.body;
 //
 //  try {
 //    const user = await User.findOne({
-//      where: { uuid: userUuid },
+//      where: { id: userId },
 //    });
 //
-//    const post = await Post.create({ body, userId: user.id });
+//    const post = await Post.create({ message, userId: user.userId });
 //
 //    return res.json(post);
 //  } catch (err) {
@@ -133,7 +135,7 @@ app.get("/user", async (req, res) => {
 //    return res.status(500).json(err);
 //  }
 //});
-//
+
 //app.get("/posts", async (req, res) => {
 //  try {
 //    const posts = await Post.findAll({ include: "user" });
