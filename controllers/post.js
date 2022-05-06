@@ -1,4 +1,4 @@
-const { Post } = require("../models");
+const { User, Post } = require("../models");
 
 const fs = require("fs");
 
@@ -20,29 +20,30 @@ exports.getJustOneElement = (req, res, next) => {
 
 // creation d'un post par l'utilisateur
 
-exports.addElement = (req, res, next) => {
-  const postObject = JSON.parse(req.body.sauce);
-  delete postObject._id;
-  const addPost = new Post({
-    ...saucesObject,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
-    message: "",
-    likes: 0,
-    dislikes: 0,
-    usersLiked: [" "],
-    usersDisliked: [" "],
-  });
-  addPost
-    .save()
-    .then(() => res.status(201).json({ message: "Post enregistré !" }))
-    .catch((error) => res.status(400).json({ error }));
+exports.addElement = async (req, res) => {
+  const image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  const userId = req.auth.userId;
+  const message = req.body.message;
+
+  try {
+    const posts = await Post.create({
+      message: message,
+      image: image,
+      userId: userId,
+    });
+
+    return res.json(posts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
 };
 
 // Modifier un post
 
 exports.updateElement = (req, res, next) => {
   Post.findOne({ _id: req.params.id }).then((posts) => {
-    if (posts.userId !== req.verifyToken.userId) {
+    if (posts.userId !== req.auth.userId) {
       return res.status(401).json({ message: "Requête non autorisée !" });
     }
     const filename = posts.imageUrl.split("/images/")[1];
@@ -65,7 +66,7 @@ exports.updateElement = (req, res, next) => {
 exports.deleteElement = (req, res, next) => {
   Post.findOne({ _id: req.params.id })
     .then((posts) => {
-      if (posts.userId !== req.verifyToken.userId) {
+      if (posts.userId !== req.auth.userId) {
         return res.status(401).json({ message: "requête non autorisée !" });
       }
       const filename = posts.imageUrl.split("/images/")[1];

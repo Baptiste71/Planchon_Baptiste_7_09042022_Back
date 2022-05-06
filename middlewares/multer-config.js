@@ -11,16 +11,16 @@ const dictionnary_MIME_TYPES = {
 // création d'un nom de fichier unique
 
 const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "images");
+  destination: (req, image, callback) => {
+    callback(null, "image");
   },
-  filename: (req, file, callback) => {
+  filename: (req, image, callback) => {
     // Suppression de l'extension du fichier original
-    const fileName = file.originalname.split(".")[0];
+    const imageName = image.originalname.split(".")[0];
     // Suppression des espaces dans le nom orginal remplacer par des '_'
-    const name = fileName.split(" ").join("_");
+    const name = imageName.split(" ").join("_");
     // Création de Date now() + extension
-    const extension = dictionnary_MIME_TYPES[file.mimetype.toLowerCase()];
+    const extension = dictionnary_MIME_TYPES[image.mimetype.toLowerCase()];
     callback(null, name + Date.now() + "." + extension);
   },
 });

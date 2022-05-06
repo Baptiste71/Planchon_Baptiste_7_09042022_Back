@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
 });
 app.use(express.json());
 app.use(routerUser);
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/image", express.static(path.join(__dirname, "image")));
 
 // Enregistrement des routes
 

@@ -8,7 +8,10 @@ module.exports = {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       message: {
         type: DataTypes.STRING,
         allowNull: false,
