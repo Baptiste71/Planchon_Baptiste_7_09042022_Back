@@ -4,9 +4,9 @@ const fs = require("fs");
 
 // apparition de tout les posts en cliquant sur "see all"
 
-exports.getAllElement = (req, res, next) => {
-  Post.find()
-    .then((posts) => res.status(200).json(posts))
+exports.getAllElement = async (req, res, next) => {
+  Post.findAll()
+    .then((post) => res.status(200).json(post))
     .catch((error) => res.status(404).json({ error }));
 };
 
