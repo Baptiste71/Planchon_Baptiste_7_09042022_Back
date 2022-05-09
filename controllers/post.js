@@ -18,6 +18,11 @@ exports.getJustOneElement = (req, res, next) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
+exports.getLastPost = (req, res, next) => {
+  Post.findAll({ limit: 1, order: ["createdAt", "DESC"] })
+    .then((post) => res.status(200).json(post))
+    .catch((error) => res.status(404).json({ error }));
+};
 // creation d'un post par l'utilisateur
 
 exports.addElement = async (req, res) => {

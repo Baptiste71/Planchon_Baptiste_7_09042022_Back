@@ -7,6 +7,7 @@ const postsCtrl = require("../controllers/post");
 
 routerPosts.get("/", verifyToken, postsCtrl.getAllElement);
 routerPosts.get("/:id", verifyToken, postsCtrl.getJustOneElement);
+routerPosts.get("/last", verifyToken, postsCtrl.getLastPost);
 routerPosts.post("/", verifyToken, multer, postsCtrl.addElement);
 routerPosts.put("/:id", verifyToken, multer, postsCtrl.updateElement);
 routerPosts.delete("/:id", verifyToken, postsCtrl.deleteElement);

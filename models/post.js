@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     toJSON() {
-      return { ...this.get(), id: undefined, userId: undefined };
+      return { ...this.get() /*id: undefined, userId: undefined*/ };
     }
   }
   Post.init(
