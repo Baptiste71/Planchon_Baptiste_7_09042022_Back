@@ -44,7 +44,7 @@ exports.login = async (req, res, next) => {
     const lastname = user[0].lastname;
     const email = user[0].email;
     const accessToken = jsonWT.sign({ userId, firstname, lastname, email }, "RANDOM_TOKEN_SECRET", {
-      expiresIn: "1d",
+      expiresIn: "24h",
     });
 
     res.json({ accessToken });

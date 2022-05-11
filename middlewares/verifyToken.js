@@ -7,8 +7,9 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = jsonWT.verify(token, "RANDOM_TOKEN_SECRET");
     const userId = decodedToken.userId;
-    req.auth = { userId };
-    if (req.auth.userId && req.auth.userId !== userId) {
+    const userName = [decodedToken.firstname, decodedToken.lastname];
+    req.auth = { userId, userName };
+    if (req.auth.userId && req.auth.userId !== userId && userName) {
       throw "User ID non valide !";
     } else {
       next();

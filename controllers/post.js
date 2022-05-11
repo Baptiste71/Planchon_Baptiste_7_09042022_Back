@@ -19,15 +19,17 @@ exports.getJustOneElement = (req, res, next) => {
 };
 
 exports.getLastPost = (req, res, next) => {
-  Post.findAll({ limit: 1, order: ["createdAt", "DESC"] })
+  Post.findOne({ limit: 1, order: [["index", "DESC"]] })
     .then((post) => res.status(200).json(post))
     .catch((error) => res.status(404).json({ error }));
 };
+
 // creation d'un post par l'utilisateur
 
 exports.addElement = async (req, res) => {
-  const image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  const image = `${req.protocol}://${req.get("host")}/image/${req.file.filename}`;
   const userId = req.auth.userId;
+  const userName = req.auth.userName[0];
   const message = req.body.message;
 
   try {
@@ -35,9 +37,16 @@ exports.addElement = async (req, res) => {
       message: message,
       image: image,
       userId: userId,
+      username: userName,
+      commentscounter: 0,
+      comments: "",
+      likes: 0,
+      dislikes: 0,
+      usersLiked: [" "],
+      usersDisliked: [" "],
     });
 
-    return res.json(posts);
+    return res.status(201).json(posts);
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
@@ -51,13 +60,13 @@ exports.updateElement = (req, res, next) => {
     if (posts.userId !== req.auth.userId) {
       return res.status(401).json({ message: "Requête non autorisée !" });
     }
-    const filename = posts.imageUrl.split("/images/")[1];
-    fs.unlink(`images/${filename}`, () => {});
+    const filename = posts.imageUrl.split("/image/")[1];
+    fs.unlink(`image/${filename}`, () => {});
   });
   const postObject = req.file
     ? {
         ...JSON.parse(req.body.post),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+        imageUrl: `${req.protocol}://${req.get("host")}/image/${req.file.filename}`,
       }
     : { ...req.body };
 
@@ -74,8 +83,8 @@ exports.deleteElement = (req, res, next) => {
       if (posts.userId !== req.auth.userId) {
         return res.status(401).json({ message: "requête non autorisée !" });
       }
-      const filename = posts.imageUrl.split("/images/")[1];
-      fs.unlink(`images/${filename}`, () => {
+      const filename = posts.imageUrl.split("/image/")[1];
+      fs.unlink(`image/${filename}`, () => {
         Post.deleteOne({ _id: req.params.id })
           .then(() => res.status(200).json({ message: "Post supprimé !" }))
           .catch((error) => res.status(400).json({ error }));

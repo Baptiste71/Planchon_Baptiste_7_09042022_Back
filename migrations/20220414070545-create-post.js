@@ -24,6 +24,34 @@ module.exports = {
           key: "id",
         },
       },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      comments: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      commentscounter: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      likes: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      dislikes: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      usersliked: {
+        type: [DataTypes.STRING],
+        allowNull: true,
+      },
+      usersdisliked: {
+        type: [DataTypes.STRING],
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
