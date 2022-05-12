@@ -9,8 +9,8 @@ routerPosts.get("/", verifyToken, postsCtrl.getAllElement);
 routerPosts.get("/:id", verifyToken, postsCtrl.getJustOneElement);
 routerPosts.get("/last", verifyToken, postsCtrl.getLastPost);
 routerPosts.post("/", verifyToken, multer, postsCtrl.addElement);
-routerPosts.put("/:id", verifyToken, multer, postsCtrl.updateElement);
-routerPosts.delete("/:id", verifyToken, postsCtrl.deleteElement);
+//routerPosts.put("/:id", verifyToken, multer, postsCtrl.updateElement);
+//routerPosts.delete("/:id", verifyToken, postsCtrl.deleteElement);
 routerPosts.post("/:id/like", verifyToken, postsCtrl.likeElement);
 
 // Exportation des routes
