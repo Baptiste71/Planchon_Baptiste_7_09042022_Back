@@ -52,46 +52,54 @@ exports.login = async (req, res, next) => {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong!" });
   }
+};
+// modification des données utilisateur
 
-  // modification des données utilisateur
+exports.updatePassword = async (req, res, next) => {
+  const newPassword = req.body.newpassword;
+  const confirmNewPassword = req.body.confirmpassword;
+  if (newPassword === confirmNewPassword) {
+    const password = req.body.newpassword;
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(password, salt);
 
-  exports.userUpdate = async (req, res, next) => {
-    const uuid = req.params.uuid;
-    const { firstname, lastname, email, password } = req.body;
     try {
-      const userDb = await User.findOne({
-        where: { uuid },
+      const userDb = await User.findAll({
+        where: {
+          email: req.auth.email,
+        },
       });
 
-      userDb.firstname = firstname;
-      userDb.lastname = lastname;
-      userDb.email = email;
-      userDb.password = password;
-
-      await userDb.save();
-
-      return res.json(userDb);
+      const match = await bcrypt.compare(hashPassword, userDb[0].password);
+      if (match) return res.status(400).json({ msg: "The new password can't be the same than the older!!" });
+      userDb[0].password = null;
+      userDb[0].password = hashPassword;
+      const sqlUpdate = `UPDATE user SET "password" = ${hashPassword};`;
+      return res.json(sqlUpdate);
     } catch (err) {
       console.log(err);
       return res.status(500).json({ error: "Something went wrong!" });
     }
-  };
+  } else {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+};
 
-  // Suppression d'un utilisateur
+// Suppression d'un utilisateur
 
-  exports.userDelete = async (req, res, next) => {
-    const uuid = req.params.uuid;
-    try {
-      const userDb = await User.findOne({
-        where: { uuid },
-      });
+exports.userDelete = async (req, res, next) => {
+  const uuid = req.params.uuid;
+  try {
+    const userDb = await User.findOne({
+      where: { uuid },
+    });
 
-      await userDb.destroy();
+    await userDb.destroy();
 
-      return res.json({ message: "User deleted!" });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Something went wrong!" });
-    }
-  };
+    return res.json({ message: "User deleted!" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
 };

@@ -4,7 +4,6 @@ const express = require("express");
 const routerUser = express.Router();
 const userCrtl = require("../controllers/user");
 const verifyToken = require("../middlewares/verifyToken");
-const refreshToken = require("../controllers/refreshToken");
 
 // Création de la route Post pour "signup" Nouveau utilisateurs
 
@@ -16,9 +15,9 @@ routerUser.post("/login", userCrtl.login);
 
 // Création de la route Put pour la modification de l'utlisateur
 
-//routerUser.put("/update", verifyToken, userCrtl.userUpdate);
+routerUser.put("/update", verifyToken, userCrtl.updatePassword);
 
-// Création de la route Put pour la modification de l'utlisateur
+// Création de la route Delete pour la suppression de l'utlisateur
 
 //routerUser.delete("/delete", verifyToken, userCrtl.userDelete);
 
