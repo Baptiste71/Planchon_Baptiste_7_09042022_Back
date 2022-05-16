@@ -9,10 +9,10 @@ exports.addComment = async (req, res) => {
 
   try {
     const cmt = await Comments.create({
-      commentscounter: +1,
+      commentscounter: 1,
       comments: comment,
       username: userName,
-      userId: userId,
+      userid: userId,
     });
 
     return res.status(201).json(cmt);

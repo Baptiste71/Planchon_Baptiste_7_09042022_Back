@@ -6,7 +6,7 @@ const { sequelize, User, Post } = require("./models");
 const user = require("./models/user");
 const cors = require("cors");
 let corsOptions = {
-  origin: "http://localhost:3000",
+  origin: process.env.API_URL,
 };
 const path = require("path");
 

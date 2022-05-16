@@ -13,6 +13,7 @@ exports.register = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
+
   try {
     const users = await User.create({
       firstname: firstname,
@@ -20,8 +21,11 @@ exports.register = async (req, res, next) => {
       email: email,
       password: hashPassword,
     });
-
-    return res.json(users);
+    const userId = users.dataValues.id;
+    const accessToken = jsonWT.sign({ userId, firstname, lastname, email }, "RANDOM_TOKEN_SECRET", {
+      expiresIn: "24h",
+    });
+    res.status(201).json({ users, accessToken });
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
@@ -89,15 +93,17 @@ exports.updatePassword = async (req, res, next) => {
 // Suppression d'un utilisateur
 
 exports.userDelete = async (req, res, next) => {
-  const uuid = req.params.uuid;
+  //const uuid = req.params.uuid;
   try {
     const userDb = await User.findOne({
-      where: { uuid },
+      where: {
+        email: req.auth.email,
+      },
     });
 
     await userDb.destroy();
 
-    return res.json({ message: "User deleted!" });
+    return res.json(userDb, { message: "User deleted!" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong!" });

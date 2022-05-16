@@ -19,7 +19,7 @@ routerUser.put("/update", verifyToken, userCrtl.updatePassword);
 
 // Création de la route Delete pour la suppression de l'utlisateur
 
-//routerUser.delete("/delete", verifyToken, userCrtl.userDelete);
+routerUser.delete("/delete", verifyToken, userCrtl.userDelete);
 
 // Exportation du router
 

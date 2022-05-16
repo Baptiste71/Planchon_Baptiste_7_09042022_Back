@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(Post) {
       // define association here
+      //userId
+      //this.belongsTo(Post);
+    }
+    toJSON() {
+      return { ...this.get() };
     }
   }
   Comments.init(
@@ -20,9 +25,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       comments: {
         type: [DataTypes.STRING],
-        allowNull: true,
+        allowNull: false,
       },
       username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      userid: {
         type: DataTypes.STRING,
         allowNull: false,
       },
