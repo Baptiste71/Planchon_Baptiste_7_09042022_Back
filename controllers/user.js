@@ -60,6 +60,9 @@ exports.login = async (req, res, next) => {
 // modification des données utilisateur
 
 exports.updatePassword = async (req, res, next) => {
+  const newFirstname = req.body.newfirstname;
+  const newLastname = req.body.newlastname;
+  const newEmail = req.body.newemail;
   const newPassword = req.body.newpassword;
   const confirmNewPassword = req.body.confirmpassword;
   if (newPassword === confirmNewPassword) {
@@ -76,10 +79,23 @@ exports.updatePassword = async (req, res, next) => {
 
       const match = await bcrypt.compare(hashPassword, userDb[0].password);
       if (match) return res.status(400).json({ msg: "The new password can't be the same than the older!!" });
+
       userDb[0].password = null;
-      userDb[0].password = hashPassword;
-      const sqlUpdate = `UPDATE user SET "password" = ${hashPassword};`;
-      return res.json(sqlUpdate);
+
+      userDb[0] = await User.update(
+        {
+          firstname: `${newFirstname}`,
+          lastname: `${newLastname}`,
+          email: `${newEmail}`,
+          password: `${hashPassword}`,
+        },
+        {
+          where: {
+            email: req.auth.email,
+          },
+        }
+      );
+      return res.status(200).json();
     } catch (err) {
       console.log(err);
       return res.status(500).json({ error: "Something went wrong!" });
@@ -103,7 +119,7 @@ exports.userDelete = async (req, res, next) => {
 
     await userDb.destroy();
 
-    return res.json(userDb, { message: "User deleted!" });
+    return res.json({ message: "User deleted!" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong!" });

@@ -10,7 +10,6 @@ module.exports = {
       },
       image: {
         type: DataTypes.STRING,
-        allowNull: true,
       },
       message: {
         type: DataTypes.STRING,

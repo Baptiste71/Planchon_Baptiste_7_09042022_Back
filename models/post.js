@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate({ User }) {
       // define association here
       //userId
-      this.belongsTo(User, { foreignKey: "userId" });
+      this.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
     }
 
     toJSON() {
@@ -24,9 +24,16 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "user",
+          key: "id",
+        },
+      },
       image: {
         type: DataTypes.STRING,
-        allowNull: true,
       },
       message: {
         type: DataTypes.STRING,

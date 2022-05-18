@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({ Post }) {
       // define association here
-      this.hasMany(Post, { foreignKey: "userId", as: "post" });
+      this.hasMany(Post, { foreignKey: "userId", as: "post", onDelete: "CASCADE", hooks: true });
     }
 
     toJSON() {
