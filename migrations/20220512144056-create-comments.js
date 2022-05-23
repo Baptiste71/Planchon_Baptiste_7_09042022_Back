@@ -12,9 +12,13 @@ module.exports = {
         type: [DataTypes.STRING],
         allowNull: true,
       },
-      commentscounter: {
-        type: DataTypes.INTEGER,
+      postid: {
+        type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: "post",
+          key: "id",
+        },
       },
       username: {
         type: DataTypes.STRING,
@@ -27,6 +31,14 @@ module.exports = {
           model: "user",
           key: "id",
         },
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
       },
     });
   },

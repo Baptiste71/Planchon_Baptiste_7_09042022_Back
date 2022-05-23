@@ -29,7 +29,7 @@ module.exports = {
       },
       comments: {
         type: [DataTypes.STRING],
-        allowNull: true,
+        allowNull: false,
       },
       commentscounter: {
         type: DataTypes.INTEGER,
