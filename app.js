@@ -22,6 +22,20 @@ app.use((req, res, next) => {
   next();
 });
 
+const normalizePort = (val) => {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    return val;
+  }
+  if (port >= 0) {
+    return port;
+  }
+  return false;
+};
+const port = normalizePort(process.env.PORT || "5000");
+app.set("port", port);
+
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
