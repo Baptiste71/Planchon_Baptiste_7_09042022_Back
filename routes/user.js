@@ -13,6 +13,10 @@ routerUser.post("/user", userCrtl.register);
 
 routerUser.post("/login", userCrtl.login);
 
+// Récuperation du profil connecté
+
+routerUser.get("/profile", verifyToken, userCrtl.getConnectedProfile);
+
 // Création de la route Put pour la modification de l'utlisateur
 
 routerUser.put("/update", verifyToken, userCrtl.updatePassword);

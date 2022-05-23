@@ -49,7 +49,11 @@ exports.addComment = async (req, res) => {
 
 exports.allCommentsOfThePost = async (req, res) => {
   try {
-    await Comments.findAll({ postId: Comments.postid === Post.id })
+    await Comments.findAll({
+      where: {
+        postid: req.body.id,
+      },
+    })
 
       .then((comment) => res.status(200).json(comment))
       .catch((error) => res.status(404).json({ error }));

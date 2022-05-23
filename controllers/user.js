@@ -57,6 +57,17 @@ exports.login = async (req, res, next) => {
     return res.status(500).json({ error: "Something went wrong!" });
   }
 };
+
+exports.getConnectedProfile = (req, res, next) => {
+  User.findOne({
+    where: {
+      firstname: req.auth.userName[0],
+    },
+  })
+    .then((user) => res.status(200).json(user))
+    .catch((error) => res.status(404).json({ error }));
+};
+
 // modification des données utilisateur
 
 exports.updatePassword = async (req, res, next) => {

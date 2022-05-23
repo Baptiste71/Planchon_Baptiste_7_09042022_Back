@@ -4,10 +4,7 @@ const dotenv = require("dotenv");
 const routerUser = require("./routes/user");
 const { sequelize, User, Post } = require("./models");
 const user = require("./models/user");
-const cors = require("cors");
-let corsOptions = {
-  origin: process.env.API_URL,
-};
+
 const path = require("path");
 
 const app = express();
@@ -25,7 +22,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
