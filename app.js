@@ -9,12 +9,6 @@ const path = require("path");
 
 const app = express();
 
-// Importation des routes
-
-const userRoutes = require("./routes/user");
-const postsRoutes = require("./routes/post");
-const commentsRoutes = require("./routes/comments");
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization");
@@ -22,19 +16,11 @@ app.use((req, res, next) => {
   next();
 });
 
-const normalizePort = (val) => {
-  const port = parseInt(val, 10);
+// Importation des routes
 
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
-  return false;
-};
-const port = normalizePort(process.env.PORT || "5000");
-app.set("port", port);
+const userRoutes = require("./routes/user");
+const postsRoutes = require("./routes/post");
+const commentsRoutes = require("./routes/comments");
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
@@ -54,7 +40,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/comments", commentsRoutes);
 
-app.listen({ port: 5000 }, async () => {
+app.listen(process.env.PORT || 5000, async () => {
   console.log("Server up on http://localhost:5000 ");
   await sequelize.authenticate();
   console.log("Database connected!");
