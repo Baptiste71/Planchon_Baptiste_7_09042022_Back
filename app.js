@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
+require("dotenv").config();
 const routerUser = require("./routes/user");
 const { sequelize, User, Post } = require("./models");
 const user = require("./models/user");
