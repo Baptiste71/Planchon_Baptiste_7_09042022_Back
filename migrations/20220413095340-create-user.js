@@ -34,6 +34,10 @@ module.exports = {
         allowNull: false,
         type: DataTypes.DATE,
       },
+      isAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
     });
   },
   async down(queryInterface, DataTypes) {

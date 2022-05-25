@@ -58,6 +58,10 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: " Password must not be empty" },
         },
       },
+      isAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
     },
     {
       sequelize,

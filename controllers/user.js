@@ -11,8 +11,11 @@ const { User } = require("../models");
 
 exports.register = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
+  const emailAdmin = process.env.ADMIN;
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
+  const match = email === emailAdmin;
+  if (match);
 
   try {
     const users = await User.create({
@@ -20,6 +23,7 @@ exports.register = async (req, res, next) => {
       lastname: lastname,
       email: email,
       password: hashPassword,
+      isAdmin: match,
     });
     const userId = users.dataValues.id;
     const accessToken = jsonWT.sign({ userId, firstname, lastname, email }, "RANDOM_TOKEN_SECRET", {
