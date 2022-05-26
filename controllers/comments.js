@@ -26,9 +26,6 @@ exports.addComment = async (req, res) => {
       }
     }
 
-    //const cmtPost = [cmt.comments];
-    //const cmtPostUpdate = Post[id.comments];
-    //const arrayUpdated = cmtPost.concat(cmtPostUpdate);
     cmt = await Post.update(
       {
         comments: `{${commentOfPost}}`,
@@ -63,4 +60,40 @@ exports.allCommentsOfThePost = async (req, res) => {
   }
 };
 
-exports.deleteComments = async (req, res) => {};
+exports.deleteComments = async (req, res) => {
+  let userId = req.auth.userId;
+  let admin = Boolean;
+  if (req.auth.email === process.env.ADMIN) {
+    admin = true;
+  } else {
+    admin = false;
+  }
+  let commentAuthor = "";
+
+  try {
+    let userComment = await Comments.findOne({
+      where: {
+        id: req.body.id,
+      },
+    }).then((comment) => {
+      commentAuthor = comment.userId;
+      let author = Boolean;
+      if (userId === commentAuthor) {
+        author = true;
+      } else {
+        author = false;
+      }
+
+      if (admin || author) {
+        return comment;
+      } else {
+        return res.status(401).json({ message: "requête non autorisée !" });
+      }
+    });
+    await userComment.destroy();
+    return res.status(200).json({ message: "Comment deleted" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500);
+  }
+};

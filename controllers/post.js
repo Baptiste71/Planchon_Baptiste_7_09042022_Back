@@ -52,3 +52,39 @@ exports.addElement = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
+exports.deletePost = async (req, res) => {
+  let userId = req.auth.userId;
+  let postAuthor = "";
+
+  try {
+    let postdelete = await Post.findOne({
+      where: {
+        id: req.body.id,
+      },
+    })
+      .then((post) => {
+        postAuthor = post.userId;
+
+        if (userId != postAuthor) {
+          return res.status(401).json({ message: "requête non autorisée !" });
+        }
+      })
+      .catch((error) => res.status(500).json({ error }));
+
+    postdelete = await Post.findOne({
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    const filename = postdelete.image;
+    fs.unlink(`image/${filename}`, () => {
+      postdelete.destroy();
+      return res.json({ message: "Post deleted!" });
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+};

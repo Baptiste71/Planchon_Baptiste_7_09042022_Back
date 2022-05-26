@@ -9,6 +9,7 @@ routerPosts.get("/", verifyToken, postsCtrl.getAllElement);
 //routerPosts.get("/:id", verifyToken, postsCtrl.getJustOneElement);
 routerPosts.get("/last", verifyToken, postsCtrl.getLastPost);
 routerPosts.post("/", verifyToken, multer, postsCtrl.addElement);
+routerPosts.post("/delete", verifyToken, postsCtrl.deletePost);
 
 // Exportation des routes
 

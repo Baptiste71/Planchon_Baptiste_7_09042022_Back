@@ -7,7 +7,7 @@ const commentCtrl = require("../controllers/comments");
 
 routerComment.post("/:id/comment", verifyToken, multer, commentCtrl.addComment);
 routerComment.post("/", verifyToken, commentCtrl.allCommentsOfThePost);
-routerComment.delete("/delete", verifyToken, commentCtrl.deleteComments);
+routerComment.post("/delete", verifyToken, commentCtrl.deleteComments);
 
 // Exportation des routes
 
