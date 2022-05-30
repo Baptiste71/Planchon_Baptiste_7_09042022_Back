@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       //userId
       this.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
-      this.hasMany(Comments, { foreignKey: "comments", onDelete: "CASCADE" });
+      this.hasMany(Comments, { foreignKey: "postid", as: "comment", onDelete: "CASCADE", hooks: true });
     }
 
     toJSON() {

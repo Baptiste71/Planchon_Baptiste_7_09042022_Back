@@ -27,7 +27,7 @@ exports.getLastPost = (req, res, next) => {
 // creation d'un post par l'utilisateur
 
 exports.addElement = async (req, res) => {
-  const image = `${req.protocol}://${req.get("host")}/image/${req.file.filename}`;
+  const image = req.file ? `${req.protocol}://${req.get("host")}/image/${req.file.filename}` : null;
   const userId = req.auth.userId;
   const userName = req.auth.userName[0];
   const message = req.body.message;
@@ -83,6 +83,7 @@ exports.deletePost = async (req, res) => {
         return res.status(401).json({ message: "requête non autorisée !" });
       }
     });
+
     await userPost.destroy();
     return res.status(200).json({ message: "Post deleted" });
   } catch (err) {

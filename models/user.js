@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate({ Post, Comments }) {
       // define association here
       this.hasMany(Post, { foreignKey: "userId", as: "post", onDelete: "CASCADE", hooks: true });
-      this.hasMany(Comments, { foreignKey: "userId", onDelete: "CASCADE", hooks: true });
+      this.hasMany(Comments, { foreignKey: "userId", as: "comment", onDelete: "CASCADE", hooks: true });
     }
 
     toJSON() {
