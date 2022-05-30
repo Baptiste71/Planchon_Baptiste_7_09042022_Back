@@ -10,14 +10,6 @@ exports.getAllElement = async (req, res, next) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// apparition d'un post en particulier si cliquer par l'utilisateur
-
-//exports.getJustOneElement = (req, res, next) => {
-//  Post.findOne({ _id: req.params.id })
-//    .then((posts) => res.status(200).json(posts))
-//    .catch((error) => res.status(404).json({ error }));
-//};
-
 exports.getLastPost = (req, res, next) => {
   Post.findOne({ limit: 1, order: [["updatedAt", "DESC"]] })
     .then((post) => res.status(200).json(post))
